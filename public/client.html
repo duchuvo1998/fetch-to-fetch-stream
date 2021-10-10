@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Demo</title>
+  <meta charset="utf-8" />
+  <style>
+    .btn{
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="content" style="display:block">
+    <table>
+      <tr>
+        <td align="left"><h3> Audio from buffer</h3></td>
+      </tr>
+      <tr>
+        <td>
+          <audio id="serverAudioStream" controls preload="none" onerror="DisplayError()">
+          </audio>
+        </td>
+      </tr>
+      <tr>
+        <td align="left"> <button class="btn" onclick="updateSrc()">Get audio</button></td>
+      </tr>
+
+    </table>
+  </div>
+
+
+  <!-- Speech SDK USAGE -->
+  <script>
+    const url = 'http://localhost:3000/demo';
+    document.getElementById('serverAudioStream').disabled = true;
+
+    // update src URL query string for Express.js server
+    async function updateSrc() {
+      var serverAudioStreamControl = document.getElementById('serverAudioStream');
+      serverAudioStreamControl.type = "audio/wav";
+
+      await fetch(url, { method: "POST", headers: { "Content-Type": "audio/mpeg" } })
+        .then(response =>
+          response.blob())
+        .then(blob =>
+          URL.createObjectURL(blob))
+        .then(url => console.log(serverAudioStreamControl.src = url))
+        .catch(err => console.log(err));
+      serverAudioStreamControl.disabled = false;
+    }
+    function DisplayError(error) {
+      window.alert(JSON.stringify(error));
+    }
+  </script>
+</body>
+
+</html>
